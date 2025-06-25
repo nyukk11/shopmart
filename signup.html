@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sign Up - ShopSmart</title>
+  <link rel="stylesheet" href="style.css" />
+  <style>
+    .profile-preview {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 10px;
+      border: 2px solid #ccc;
+      cursor: pointer;
+    }
+    .profile-upload {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    #profilePic {
+      display: none;
+    }
+    .upload-label {
+      color: #2c3e50;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    .upload-label:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body class="signup-body">
+
+  <div class="signup-container">
+    <h2>Create Account 🧾</h2>
+    <p>Sign up to start shopping</p>
+
+    <!-- Profile Picture Upload -->
+    <div class="profile-upload">
+      <label for="profilePic">
+        <img id="profilePreview" class="profile-preview" src="default-avatar.png" alt="Profile Preview" title="Click to upload image"/>
+      </label>
+      <label for="profilePic" class="upload-label">Upload Profile Picture</label>
+      <input type="file" id="profilePic" accept="image/*" />
+    </div>
+
+    <form class="signup-form" id="signupForm">
+      <input type="text" id="name" placeholder="Full Name" required />
+      <input type="email" id="email" placeholder="Email Address" required />
+      <input type="password" id="password" placeholder="Password" required />
+      <input type="password" id="confirmPassword" placeholder="Confirm Password" required />
+      <button type="submit">Sign Up</button>
+    </form>
+
+    <p class="login-link">Already have an account? <a href="login.html">Login</a></p>
+  </div>
+
+  <script>
+    const profileInput = document.getElementById("profilePic");
+    const profilePreview = document.getElementById("profilePreview");
+
+    let base64Profile = "";
+
+    // Click on image to trigger file input
+    profilePreview.addEventListener("click", function() {
+      profileInput.click();
+    });
+
+    profileInput.addEventListener("change", function () {
+      const file = this.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          base64Profile = e.target.result;
+          profilePreview.src = base64Profile;
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+
+    document.getElementById("signupForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const confirmPassword = document.getElementById("confirmPassword").value;
+
+      if (password !== confirmPassword) {
+        alert("❌ Passwords do not match!");
+        return;
+      }
+
+      // Create user object with profile data
+      const user = {
+        name,
+        email,
+        password,
+        profilePic: base64Profile || "default-avatar.png"
+      };
+
+      // Save user data to localStorage
+      localStorage.setItem("currentUser", JSON.stringify(user));
+      
+      // Also save to users list (for login functionality)
+      let users = JSON.parse(localStorage.getItem("users")) || [];
+      users.push(user);
+      localStorage.setItem("users", JSON.stringify(users));
+
+      alert("✅ Signup successful!");
+      window.location.href = "shopelist.html"; // redirect to shop list
+    });
+  </script>
+</body>
+</html>
+
+

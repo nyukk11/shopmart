@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Shop List - ShopSmart</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f9f9f9;
+      margin: 0;
+    }
+
+    .topbar {
+      background: #2c3e50;
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .topbar h2 {
+      margin: 0;
+    }
+
+    .topbar-icons {
+      font-size: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .topbar-icons i {
+      cursor: pointer;
+      transition: color 0.2s;
+    }
+
+    .topbar-icons i:hover {
+      color: #f39c12;
+    }
+
+    .cart-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #cartDropdown {
+      display: none;
+      position: absolute;
+      top: 30px;
+      right: 0;
+      width: 260px;
+      background: #fff;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      border-radius: 10px;
+      padding: 10px;
+      z-index: 999;
+    }
+
+    #cartItems {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    #cartItems li {
+      margin-bottom: 8px;
+      font-size: 15px;
+    }
+
+    .user-profile {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .profile-circle {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: #f39c12;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .profile-circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .profile-circle .initials {
+      color: white;
+      font-weight: bold;
+      font-size: 14px;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .category-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 30px;
+    }
+
+    .category-buttons button {
+      padding: 10px 20px;
+      border: none;
+      background: #2c3e50;
+      color: white;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .category-buttons button:hover {
+      background: #f39c12;
+    }
+
+    .product-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
+      padding-bottom: 50px;
+    }
+
+    .product-card {
+      width: 200px;
+      background: white;
+      border-radius: 10px;
+      padding: 15px;
+      box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: 0.3s;
+      position: relative;
+    }
+
+    .product-card:hover {
+      transform: scale(1.05);
+    }
+
+    .product-card img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .product-card h3 {
+      margin: 10px 0 5px;
+    }
+
+    .product-card p {
+      font-weight: bold;
+      color: #333;
+    }
+
+    .product-card button {
+      margin-top: 8px;
+      padding: 8px 10px;
+      width: 100%;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .add-cart {
+      background-color: #27ae60;
+      color: rgb(255, 255, 255);
+    }
+
+    .add-cart:hover {
+      background-color: #2ecc71;
+    }
+
+    .buy-now {
+      background-color: #2980b9;
+      color: white;
+    }
+
+    .buy-now:hover {
+      background-color: #3498db;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .cart-icon {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(255, 255, 255, 0.8);
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      opacity: 0;
+    }
+
+    .product-card:hover .cart-icon {
+      opacity: 1;
+    }
+
+    .cart-icon:hover {
+      background: #f39c12;
+      color: white;
+    }
+
+    /* 🔻 Settings Dropdown Style */
+    .settings-container {
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .settings-dropdown {
+      display: none;
+      position: absolute;
+      top: 30px;
+      right: 0;
+      background: white;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      border-radius: 8px;
+      padding: 10px;
+      z-index: 999;
+      width: 150px;
+    }
+
+    .logout-btn {
+      background: #e74c3c;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .logout-btn:hover {
+      background: #c0392b;
+    }
+  </style>
+
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+
+  <!-- 🔝 Topbar -->
+  <div class="topbar">
+    <h2>🛍️ ShopSmart</h2>
+    <div class="topbar-icons">
+      <!-- User Profile -->
+      <div class="user-profile">
+        <div class="profile-circle" id="profileCircle">
+          <!-- Image will be added via JavaScript -->
+          <div class="initials">U</div>
+        </div>
+        <span id="username">User</span>
+      </div>
+
+      <!-- Settings with dropdown -->
+      <div class="settings-container" onclick="toggleSettingsDropdown()">
+        <i class="fas fa-cog" title="Settings"></i>
+        <span>⚙️</span>
+        <div id="settingsDropdown" class="settings-dropdown">
+          <button onclick="logout()" class="logout-btn">Logout</button>
+        </div>
+      </div>
+
+      <!-- Cart icon -->
+      <div class="cart-container" onclick="toggleCartDropdown()">
+        <i class="fas fa-shopping-cart" title="Cart"></i>
+        <span>🛒</span>
+        <div id="cartDropdown">
+          <h4>🛒 Your Cart</h4>
+          <ul id="cartItems"></ul>
+          <hr />
+          <button onclick="clearCart()" style="background:#e74c3c; color:white; border:none; padding:6px 12px; border-radius:5px; cursor:pointer;">Clear Cart</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h1>🛍️ Shop by Category</h1>
+
+  <div class="category-buttons">
+    <button onclick="filterProducts('all')">All</button>
+    <button onclick="filterProducts('shoes')">Shoes</button>
+    <button onclick="filterProducts('pant')">Pant</button>
+    <button onclick="filterProducts('tshirt')">T-Shirt</button>
+    <button onclick="filterProducts('watch')">Watch</button>
+  </div>
+
+  <div class="product-grid" id="productGrid">
+    <!-- Product Cards -->
+    <div class="product-card" data-category="shoes">
+      <div class="cart-icon" onclick="addToCart('Nike Air', 2999, 'images/shoes.jpg')"><i class="fas fa-cart-plus"></i></div>
+      <img src="images/shoes.jpg" alt="Shoes">
+      <h3>Nike Air</h3>
+      <p>₹2,999</p>
+      <button class="add-cart" onclick="addToCart('Nike Air', 2999, 'images/shoes.jpg')">Add to Cart</button>
+      <button class="buy-now">Buy Now</button>
+    </div>
+
+    <div class="product-card" data-category="shoes">
+      <div class="cart-icon" onclick="addToCart('Adidas Sneakers', 3499, 'images/shoes.jpg')"><i class="fas fa-cart-plus"></i></div>
+      <img src="images/shoes.jpg" alt="Shoes">
+      <h3>Adidas Sneakers</h3>
+      <p>₹3,499</p>
+      <button class="add-cart" onclick="addToCart('Adidas Sneakers', 3499, 'images/shoes.jpg')">Add to Cart</button>
+      <button class="buy-now">Buy Now</button>
+    </div>
+
+    <div class="product-card" data-category="pant">
+      <div class="cart-icon" onclick="addToCart('Denim Jeans', 1199, 'images/pant.jpg')"><i class="fas fa-cart-plus"></i></div>
+      <img src="images/pant.jpg" alt="Pant">
+      <h3>Denim Jeans</h3>
+      <p>₹1,199</p>
+      <button class="add-cart" onclick="addToCart('Denim Jeans', 1199, 'images/pant.jpg')">Add to Cart</button>
+      <button class="buy-now">Buy Now</button>
+    </div>
+
+    <div class="product-card" data-category="tshirt">
+      <div class="cart-icon" onclick="addToCart('Graphic Tee', 699, 'images/tshirt.jpg')"><i class="fas fa-cart-plus"></i></div>
+      <img src="images/tshirt.jpg" alt="T-Shirt">
+      <h3>Graphic Tee</h3>
+      <p>₹699</p>
+      <button class="add-cart" onclick="addToCart('Graphic Tee', 699, 'images/tshirt.jpg')">Add to Cart</button>
+      <button class="buy-now">Buy Now</button>
+    </div>
+
+    <div class="product-card" data-category="watch">
+      <div class="cart-icon" onclick="addToCart('Smartwatch Pro', 3999, 'images/watch.jpg')"><i class="fas fa-cart-plus"></i></div>
+      <img src="images/watch.jpg" alt="Watch">
+      <h3>Smartwatch Pro</h3>
+      <p>₹3,999</p>
+      <button class="add-cart" onclick="addToCart('Smartwatch Pro', 3999, 'images/watch.jpg')">Add to Cart</button>
+      <button class="buy-now">Buy Now</button>
+    </div>
+  </div>
+
+<script>
+  // Load user profile data
+  function loadUserProfile() {
+    // Get user data from localStorage or session
+    const user = JSON.parse(localStorage.getItem('user')) || {
+      name: 'User',
+      image: null
+    };
+    
+    document.getElementById('username').textContent = user.name.split(' ')[0]; // Show first name only
+    
+    const profileCircle = document.getElementById('profileCircle');
+    
+    if (user.image) {
+      // If user has an image, display it
+      profileCircle.innerHTML = `<img src="${user.image}" alt="${user.name}">`;
+    } else {
+      // Otherwise show initials
+      const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+      profileCircle.querySelector('.initials').textContent = initials;
+    }
+  }
+
+  function filterProducts(category) {
+    const cards = document.querySelectorAll('.product-card');
+    cards.forEach(card => {
+      const cat = card.getAttribute('data-category');
+      card.classList.toggle('hidden', !(category === 'all' || cat === category));
+    });
+  }
+
+  function addToCart(name, price, image) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.push({ name: name, price: price, image: image });
+    localStorage.setItem("cart", JSON.stringify(cart));
+    showCartDropdown();
+
+    const dropdown = document.getElementById("cartDropdown");
+    dropdown.style.display = "block";
+
+    const notification = document.createElement('div');
+    notification.textContent = `${name} added to cart!`;
+    notification.style.position = 'fixed';
+    notification.style.bottom = '20px';
+    notification.style.right = '20px';
+    notification.style.backgroundColor = '#27ae60';
+    notification.style.color = 'white';
+    notification.style.padding = '10px 20px';
+    notification.style.borderRadius = '5px';
+    notification.style.zIndex = '1000';
+    document.body.appendChild(notification);
+
+    setTimeout(() => {
+      notification.style.opacity = '0';
+      notification.style.transition = 'opacity 0.5s';
+      setTimeout(() => notification.remove(), 500);
+    }, 2000);
+  }
+
+  function toggleCartDropdown() {
+    document.getElementById("cartDropdown").style.display = "block";
+    showCartDropdown();
+  }
+
+  function showCartDropdown() {
+    const list = document.getElementById("cartItems");
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    list.innerHTML = "";
+
+    if (cart.length === 0) {
+      list.innerHTML = "<li>No items in cart</li>";
+      return;
+    }
+
+    cart.forEach((item, index) => {
+      const li = document.createElement("li");
+      li.innerHTML = `
+        <div style="display:flex; gap:10px; align-items:center; margin-bottom:10px;">
+          <img src="${item.image}" alt="${item.name}" style="width:40px; height:40px; object-fit:cover; border-radius:4px;">
+          <div style="flex:1;">
+            <div style="font-size:14px; font-weight:600; color:#000;">${item.name || 'Unnamed Product'}</div>
+            <div style="font-size:13px; color:#555;">₹${item.price}</div>
+          </div>
+          <button onclick="removeItem(${index})" style="background:#f39c12; border:none; border-radius:4px; color:white; padding:2px 6px; cursor:pointer;">x</button>
+        </div>
+        <button style="background:#2980b9; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; width:100%; margin-bottom:10px;">Shop Now</button>
+      `;
+      list.appendChild(li);
+    });
+  }
+
+  function removeItem(index) {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    cart.splice(index, 1);
+    localStorage.setItem("cart", JSON.stringify(cart));
+    showCartDropdown();
+  }
+
+  function clearCart() {
+    localStorage.removeItem("cart");
+    showCartDropdown();
+  }
+
+  // Add this function to your shopelist.html
+function loadUserProfile() {
+  const user = JSON.parse(localStorage.getItem('currentUser')) || {
+    name: 'User',
+    profilePic: null
+  };
+  
+  document.getElementById('username').textContent = user.name.split(' ')[0]; // Show first name only
+  
+  const profileCircle = document.getElementById('profileCircle');
+  
+  if (user.profilePic && user.profilePic !== "default-avatar.png") {
+    // If user has an image, display it
+    profileCircle.innerHTML = `<img src="${user.profilePic}" alt="${user.name}">`;
+  } else {
+    // Otherwise show initials
+    const initials = user.name.split(' ').map(n => n[0]).join('').toUpperCase();
+    profileCircle.querySelector('.initials').textContent = initials;
+  }
+}
+
+// Call this when the page loads
+window.onload = function() {
+  loadUserProfile();
+  showCartDropdown();
+};
+
+  function toggleSettingsDropdown() {
+    const dropdown = document.getElementById("settingsDropdown");
+    dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+  }
+
+  function logout() {
+    alert("You have been logged out.");
+    localStorage.clear();
+    location.reload();
+    window.location.href = "index.html";
+  }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener("click", function (e) {
+    const cart = document.querySelector(".cart-container");
+    const settings = document.querySelector(".settings-container");
+    if (!cart.contains(e.target)) {
+      document.getElementById("cartDropdown").style.display = "none";
+    }
+    if (!settings.contains(e.target)) {
+      document.getElementById("settingsDropdown").style.display = "none";
+    }
+  });
+
+  // Initialize on page load
+  window.onload = function() {
+    loadUserProfile();
+    showCartDropdown();
+  };
+</script>
+
+</body>
+</html>
+
+
+
+
